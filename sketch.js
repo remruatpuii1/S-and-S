@@ -4,56 +4,71 @@ const Bodies = Matter.Bodies;
 const Constraint = Matter.Constraint;
 
 var engine, world;
-var backgroundImg;
+var backgroundimage;
+var response,j,daytime,hour;
+var ampm;
 
-var bg = "sunrise1.png"
+async function gettime(){
+    response = await fetch("https://worldtimeapi.org/api/timezone/Asia/Kolkata");
+    j = await response.json();
+    daytime = j.datetime;
+    hour =  daytime.slice(11,13);
+   if(hour <= 8 && hour >= 6){
+       var bg = "sunrise1.png";
+   }
+   else if(hour <= 10 && hour >= 8){
+       var bg = "sunrise2.png";
+   }
+   else if(hour <= 12 && hour >= 10){
+       var bg = "sunrise4.png";
+   }
+   else if(hour <= 14 && hour >= 12){
+       var bg = "sunrise5.png";
+   }
+   else if(hour <= 16 && hour >= 14){
+       var bg = "sunset7.png";
+   }
+   else if(hour <= 18 && hour >= 16){
+       var bg = "sunset10.png";
+   }
+   else if(hour <= 20 && hour >= 18){
+       var bg = "sunset11.png";
+   }
+   else {
+       var bg = "sunset12.png";
+   }
+   backgroundimage = loadImage(bg);
+    console.log(hour);
 
-var bg ;
+}
 
 function preload() {
-    getBackgroundImg();
+
+    gettime();
 }
 
 function setup(){
-    var canvas = createCanvas(1159,512 );
+    var canvas = createCanvas(1200,700);
     engine = Engine.create();
     world = engine.world;
 
 }
 
 function draw(){
-    if(backgroundImg)
-        background(backgroundImg);
 
-    // add condition to check if any background image is there to add
-
+    if(backgroundimage ){
+        background(backgroundimage);
+        }
 
     Engine.update(engine);
 
-    // write code to display time in correct format here
+    if(hour < 12 && hour > 0){
+        ampm = "AM";
+    }
+    else {
+        ampm = "PM";
+    };
 
-
-}
-
-async function getBackgroundImg(){
-    
-    var response = await fetch("https://worldtimeapi.org/api/timezone/Asia/Kolkata");
-    var responseJSON = await response.json();
-
-    var datetime = responseJSON.datetime;
-    var hour = datetime.slice(11,13);
-
-    if (hour>=04 && hour<=06 ){
-        bg = "sunrise1 .png";
-    }else if (hour>=06 && hour<=08 ){
-        bg = "sunrise2.png";
-    }else if (hour>=23 && hour==0) {
-        bg = "sunset10.png";
-    }else if (hour==0 && hour<=03) {
-        bg = "sunset11.png" ;
-    }else{
-        bg = "sunset12.png" ;
-        }
-    
-    backgroundImg = loadImage(bg);
+    textSize(35);
+    text("TIME : " + hour + ampm,50,50);
 }
